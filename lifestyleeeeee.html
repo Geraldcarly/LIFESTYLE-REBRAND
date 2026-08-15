@@ -36,152 +36,8 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Montserrat:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 
-<style>
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  :root { --primary: #111111; --secondary: #2E2E2E; --accent: #BDBDBD; --bg: #0a0a0a; --bg-light: #161616; --text: #ffffff; --text-muted: #9a9a9a; --border: #2a2a2a; --success: #4ade80; --danger: #ef4444; }
-  html { scroll-behavior: smooth; }
-  body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); overflow-x: hidden; line-height: 1.6; }
-  h1,h2,h3,h4 { font-family: 'Montserrat', sans-serif; font-weight: 800; letter-spacing: -0.02em; }
-  .container { max-width: 1400px; margin: 0 auto; padding: 0 24px; }
-  
-  #loader { position: fixed; inset: 0; background: var(--bg); z-index: 9999; display: flex; align-items: center; justify-content: center; transition: opacity 0.8s ease; }
-  #loader.hidden { opacity: 0; pointer-events: none; }
-  .loader-logo { font-family: 'Montserrat', sans-serif; font-size: 2.5rem; font-weight: 900; letter-spacing: 0.3em; animation: pulse 1.5s infinite; }
-  @keyframes pulse { 0%,100% { opacity: 0.3; } 50% { opacity: 1; } }
-  
-  header { position: fixed; top: 0; left: 0; right: 0; z-index: 1000; background: rgba(10,10,10,0.85); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border); }
-  .nav-inner { display: flex; align-items: center; justify-content: space-between; padding: 18px 24px; max-width: 1400px; margin: 0 auto; }
-  .logo { font-family: 'Montserrat', sans-serif; font-weight: 900; font-size: 1.5rem; letter-spacing: 0.25em; cursor: pointer; background: linear-gradient(135deg, #fff 0%, #BDBDBD 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-  .nav-links { display: flex; gap: 32px; align-items: center; }
-  .nav-links a { color: var(--text); text-decoration: none; font-size: 0.9rem; font-weight: 500; letter-spacing: 0.05em; text-transform: uppercase; transition: color 0.3s; }
-  .nav-links a:hover { color: var(--accent); }
-  .nav-icons { display: flex; gap: 20px; align-items: center; }
-  .icon-btn { background: none; border: none; color: var(--text); cursor: pointer; position: relative; padding: 8px; }
-  .icon-btn svg { width: 22px; height: 22px; }
-  .badge { position: absolute; top: 0; right: 0; background: var(--text); color: var(--bg); font-size: 0.7rem; font-weight: 700; width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
-  .menu-toggle { display: none; background: none; border: none; color: var(--text); cursor: pointer; }
-  
-  main { padding-top: 80px; min-height: 100vh; }
-  .page { display: none; animation: fadeIn 0.6s ease; }
-  .page.active { display: block; }
-  @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-  
-  .hero { position: relative; height: 100vh; overflow: hidden; display: flex; align-items: center; justify-content: center; }
-  #hero-canvas { position: absolute; inset: 0; z-index: 1; }
-  .hero-overlay { position: absolute; inset: 0; z-index: 2; background: radial-gradient(circle at center, transparent 0%, rgba(0,0,0,0.6) 100%); pointer-events: none; }
-  .hero-content { position: relative; z-index: 3; text-align: center; max-width: 900px; padding: 0 24px; }
-  .hero h1 { font-size: clamp(2.5rem, 7vw, 6rem); line-height: 1; margin-bottom: 24px; font-weight: 900; background: linear-gradient(135deg, #fff 0%, #BDBDBD 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-  .hero p { font-size: clamp(1rem, 1.5vw, 1.25rem); color: var(--text-muted); margin-bottom: 40px; font-weight: 300; }
-  .btn-group { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
-  .btn { padding: 16px 36px; border: none; cursor: pointer; font-family: 'Inter', sans-serif; font-weight: 600; font-size: 0.9rem; letter-spacing: 0.1em; text-transform: uppercase; transition: all 0.3s ease; text-decoration: none; display: inline-flex; align-items: center; gap: 10px; }
-  .btn-primary { background: var(--text); color: var(--bg); }
-  .btn-primary:hover { background: var(--accent); transform: translateY(-2px); }
-  .btn-secondary { background: transparent; color: var(--text); border: 1px solid var(--border); }
-  .btn-secondary:hover { background: var(--secondary); border-color: var(--text); }
-  .btn-small { padding: 10px 20px; font-size: 0.75rem; }
-  .btn-full { width: 100%; justify-content: center; }
-  
-  section { padding: 100px 0; }
-  .section-header { text-align: center; margin-bottom: 60px; }
-  .section-tag { display: inline-block; font-size: 0.8rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 16px; }
-  .section-title { font-size: clamp(2rem, 4vw, 3.5rem); margin-bottom: 16px; }
-  .section-subtitle { color: var(--text-muted); font-size: 1.1rem; max-width: 600px; margin: 0 auto; }
-  
-  .featured-categories-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; }
-  .category-block { background: var(--bg-light); border: 1px solid var(--border); border-radius: 8px; padding: 30px; transition: transform 0.3s ease; }
-  .category-block:hover { transform: translateY(-5px); border-color: var(--accent); }
-  .category-block h3 { font-size: 1.5rem; margin-bottom: 24px; border-bottom: 1px solid var(--border); padding-bottom: 16px; }
-  .color-options-display { display: flex; flex-wrap: wrap; gap: 16px; margin-bottom: 24px; }
-  .color-item { display: flex; flex-direction: column; align-items: center; gap: 8px; cursor: pointer; }
-  .color-swatch { width: 50px; height: 50px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1); transition: transform 0.2s; }
-  .color-item:hover .color-swatch { transform: scale(1.1); }
-  .color-name { font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; }
-  .category-price-tag { font-size: 1.25rem; font-weight: 700; color: var(--text); display: block; }
-  
-  .products-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 30px; }
-  .product-card { background: var(--bg-light); border-radius: 4px; overflow: hidden; transition: all 0.4s ease; cursor: pointer; border: 1px solid var(--border); }
-  .product-card:hover { transform: translateY(-8px); border-color: var(--accent); box-shadow: 0 20px 40px rgba(0,0,0,0.5); }
-  .product-img-wrap { position: relative; aspect-ratio: 1; overflow: hidden; background: #1a1a1a; }
-  .product-img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s ease; }
-  .product-card:hover .product-img { transform: scale(1.08); }
-  .product-badge { position: absolute; top: 12px; left: 12px; background: var(--text); color: var(--bg); padding: 6px 12px; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; }
-  .product-info { padding: 20px; }
-  .product-category { font-size: 0.75rem; color: var(--text-muted); letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 8px; }
-  .product-name { font-size: 1.05rem; font-weight: 600; margin-bottom: 12px; }
-  .product-price { display: flex; justify-content: space-between; align-items: center; }
-  .price { font-size: 1.1rem; font-weight: 700; }
-  .add-cart-btn { background: var(--secondary); color: var(--text); border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; transition: all 0.3s; }
-  .add-cart-btn:hover { background: var(--text); color: var(--bg); }
-  
-  .testimonials-preview { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; margin-bottom: 40px; }
-  .testimonial-card { background: var(--bg); padding: 30px; border-radius: 4px; border: 1px solid var(--border); transition: all 0.3s; }
-  .testimonial-card:hover { transform: translateY(-5px); border-color: var(--accent); }
-  .testimonial-header { display: flex; align-items: center; gap: 16px; margin-bottom: 16px; }
-  .testimonial-avatar { width: 50px; height: 50px; border-radius: 50%; background: var(--secondary); overflow: hidden; }
-  .testimonial-avatar img { width: 100%; height: 100%; object-fit: cover; }
-  .testimonial-author h4 { font-size: 1rem; margin-bottom: 2px; font-weight: 600; }
-  .testimonial-author p { color: var(--text-muted); font-size: 0.85rem; }
-  .testimonial-text { color: var(--text-muted); font-style: italic; line-height: 1.7; margin-bottom: 12px; }
-  .testimonial-stars { color: #fbbf24; font-size: 0.9rem; }
-  
-  .community-gallery { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 24px; margin-top: 40px; }
-  .gallery-item { position: relative; border-radius: 8px; overflow: hidden; aspect-ratio: 3/4; cursor: pointer; border: 1px solid var(--border); }
-  .gallery-item img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s ease; }
-  .gallery-item:hover img { transform: scale(1.05); }
-  .gallery-overlay { position: absolute; inset: 0; background: linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.9) 100%); display: flex; flex-direction: column; justify-content: flex-end; padding: 24px; opacity: 0; transition: opacity 0.3s; }
-  .gallery-item:hover .gallery-overlay { opacity: 1; }
-  .gallery-title { font-size: 1.2rem; font-weight: 700; margin-bottom: 8px; }
-  .gallery-desc { color: var(--text-muted); font-size: 0.9rem; }
-  
-  .about-hero { height: 60vh; display: flex; align-items: center; background: linear-gradient(135deg, var(--bg) 0%, var(--bg-light) 100%); text-align: center; }
-  .about-hero h1 { font-size: clamp(2.5rem, 6vw, 5rem); }
-  .about-text-content { max-width: 900px; margin: 0 auto; }
-  .about-text-content p { color: var(--text-muted); line-height: 1.8; margin-bottom: 20px; font-size: 1.05rem; }
-  .vision-mission-panel { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin: 60px 0; }
-  .vm-card { background: var(--bg-light); padding: 40px; border-radius: 8px; border: 1px solid var(--border); }
-  .vm-card .vm-icon { font-size: 2.5rem; margin-bottom: 16px; }
-  .vm-card h3 { font-size: 1.5rem; margin-bottom: 16px; }
-  .vm-card p { color: var(--text-muted); line-height: 1.7; }
-  .values-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 30px; margin-top: 60px; }
-  .value-card { background: var(--bg-light); padding: 40px 30px; border-radius: 4px; border: 1px solid var(--border); transition: all 0.3s; }
-  .value-card:hover { border-color: var(--accent); transform: translateY(-5px); }
-  .value-icon { width: 60px; height: 60px; background: var(--secondary); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-bottom: 20px; font-size: 1.5rem; }
-  .value-card h3 { font-size: 1.3rem; margin-bottom: 12px; }
-  .value-card p { color: var(--text-muted); }
-  
-  .cart-layout, .checkout-layout { display: grid; grid-template-columns: 1fr 380px; gap: 40px; }
-  .cart-items, .cart-summary, .checkout-form { background: var(--bg-light); border-radius: 4px; padding: 30px; border: 1px solid var(--border); }
-  .cart-item { display: grid; grid-template-columns: 100px 1fr auto; gap: 20px; padding: 20px 0; border-bottom: 1px solid var(--border); align-items: center; }
-  .cart-item-img { width: 100px; height: 100px; background: var(--bg); border-radius: 4px; overflow: hidden; }
-  .cart-item-img img { width: 100%; height: 100%; object-fit: cover; }
-  .summary-row { display: flex; justify-content: space-between; padding: 12px 0; color: var(--text-muted); }
-  .summary-row.total { border-top: 1px solid var(--border); margin-top: 12px; padding-top: 20px; color: var(--text); font-size: 1.2rem; font-weight: 700; }
-  .form-group { margin-bottom: 20px; }
-  .form-group label { display: block; font-size: 0.85rem; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 8px; font-weight: 600; }
-  .form-group input, .form-group select, .form-group textarea { width: 100%; background: var(--bg); border: 1px solid var(--border); color: var(--text); padding: 14px; border-radius: 4px; font-family: 'Inter', sans-serif; }
-  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-  
-  footer { background: var(--primary); padding: 40px 0 20px; border-top: 1px solid var(--border); text-align: center; }
-  .footer-bottom { color: var(--text-muted); font-size: 0.9rem; }
-  .toast { position: fixed; bottom: 30px; right: 30px; z-index: 3000; background: var(--text); color: var(--bg); padding: 16px 24px; border-radius: 4px; font-weight: 600; transform: translateY(100px); opacity: 0; transition: all 0.3s; }
-  .toast.show { transform: translateY(0); opacity: 1; }
-  .breadcrumb { padding: 20px 0; color: var(--text-muted); font-size: 0.9rem; }
-  .breadcrumb a { color: var(--text-muted); text-decoration: none; }
-  .breadcrumb a:hover { color: var(--text); }
-  .breadcrumb span { margin: 0 8px; }
-  
-  @media (max-width: 968px) {
-    .nav-links { display: none; }
-    .menu-toggle { display: block; }
-    .nav-links.mobile-open { display: flex; position: absolute; top: 100%; left: 0; right: 0; flex-direction: column; background: var(--bg); padding: 20px; border-bottom: 1px solid var(--border); }
-    .cart-layout, .checkout-layout, .vision-mission-panel { grid-template-columns: 1fr; }
-  }
-  @media (max-width: 568px) {
-    .form-row { grid-template-columns: 1fr; }
-    .hero h1 { font-size: 2.5rem; }
-    section { padding: 60px 0; }
-  }
-</style>
+<!-- Link to External CSS -->
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
 
@@ -232,26 +88,11 @@
             <img src="frontblacktshirt.html.JPEG" alt="Lifestyle T-Shirts Collection" style="width: 100%; height: 100%; object-fit: cover;" loading="lazy">
           </div>
           <div class="color-options-display" style="justify-content: center; margin-bottom: 20px;">
-            <div class="color-item" onclick="navigateTo('shop')" style="cursor: pointer;">
-              <div class="color-swatch" style="background: #111111; border: 2px solid #333;" title="Black"></div>
-              <span class="color-name">Black</span>
-            </div>
-            <div class="color-item" onclick="navigateTo('shop')" style="cursor: pointer;">
-              <div class="color-swatch" style="background: #FFFFFF; border: 2px solid #ddd;" title="White"></div>
-              <span class="color-name">White</span>
-            </div>
-            <div class="color-item" onclick="navigateTo('shop')" style="cursor: pointer;">
-              <div class="color-swatch" style="background: #8B4513; border: 2px solid #5a2d0c;" title="Brown"></div>
-              <span class="color-name">Brown</span>
-            </div>
-            <div class="color-item" onclick="navigateTo('shop')" style="cursor: pointer;">
-              <div class="color-swatch" style="background: #0000FF; border: 2px solid #00008b;" title="Blue"></div>
-              <span class="color-name">Blue</span>
-            </div>
-            <div class="color-item" onclick="navigateTo('shop')" style="cursor: pointer;">
-              <div class="color-swatch" style="background: #FFC0CB; border: 2px solid #ffb6c1;" title="Pink"></div>
-              <span class="color-name">Pink</span>
-            </div>
+            <div class="color-item" onclick="navigateTo('shop')" style="cursor: pointer;"><div class="color-swatch" style="background: #111111; border: 2px solid #333;" title="Black"></div><span class="color-name">Black</span></div>
+            <div class="color-item" onclick="navigateTo('shop')" style="cursor: pointer;"><div class="color-swatch" style="background: #FFFFFF; border: 2px solid #ddd;" title="White"></div><span class="color-name">White</span></div>
+            <div class="color-item" onclick="navigateTo('shop')" style="cursor: pointer;"><div class="color-swatch" style="background: #8B4513; border: 2px solid #5a2d0c;" title="Brown"></div><span class="color-name">Brown</span></div>
+            <div class="color-item" onclick="navigateTo('shop')" style="cursor: pointer;"><div class="color-swatch" style="background: #0000FF; border: 2px solid #00008b;" title="Blue"></div><span class="color-name">Blue</span></div>
+            <div class="color-item" onclick="navigateTo('shop')" style="cursor: pointer;"><div class="color-swatch" style="background: #FFC0CB; border: 2px solid #ffb6c1;" title="Pink"></div><span class="color-name">Pink</span></div>
           </div>
           <span class="category-price-tag" style="text-align: center; display: block;">40,000 TSH</span>
           <button class="btn btn-secondary btn-full" onclick="navigateTo('shop')" style="margin-top: 16px;">Shop T-Shirts</button>
@@ -264,14 +105,8 @@
             <img src="crop2.html.jpeg" alt="Lifestyle Crop Tees Collection" style="width: 100%; height: 100%; object-fit: cover;" loading="lazy">
           </div>
           <div class="color-options-display" style="justify-content: center; margin-bottom: 20px;">
-            <div class="color-item" onclick="navigateTo('shop')" style="cursor: pointer;">
-              <div class="color-swatch" style="background: #111111; border: 2px solid #333;" title="Black"></div>
-              <span class="color-name">Black</span>
-            </div>
-            <div class="color-item" onclick="navigateTo('shop')" style="cursor: pointer;">
-              <div class="color-swatch" style="background: #FFFFFF; border: 2px solid #ddd;" title="White"></div>
-              <span class="color-name">White</span>
-            </div>
+            <div class="color-item" onclick="navigateTo('shop')" style="cursor: pointer;"><div class="color-swatch" style="background: #111111; border: 2px solid #333;" title="Black"></div><span class="color-name">Black</span></div>
+            <div class="color-item" onclick="navigateTo('shop')" style="cursor: pointer;"><div class="color-swatch" style="background: #FFFFFF; border: 2px solid #ddd;" title="White"></div><span class="color-name">White</span></div>
           </div>
           <span class="category-price-tag" style="text-align: center; display: block;">30,000 TSH</span>
           <button class="btn btn-secondary btn-full" onclick="navigateTo('shop')" style="margin-top: 16px;">Shop Crop Tees</button>
@@ -284,14 +119,8 @@
             <img src="whitejersey.html.jpeg" alt="Lifestyle Jerseys Collection" style="width: 100%; height: 100%; object-fit: cover;" loading="lazy">
           </div>
           <div class="color-options-display" style="justify-content: center; margin-bottom: 20px;">
-            <div class="color-item" onclick="navigateTo('shop')" style="cursor: pointer;">
-              <div class="color-swatch" style="background: #111111; border: 2px solid #333;" title="Black"></div>
-              <span class="color-name">Black</span>
-            </div>
-            <div class="color-item" onclick="navigateTo('shop')" style="cursor: pointer;">
-              <div class="color-swatch" style="background: #0000FF; border: 2px solid #00008b;" title="Blue"></div>
-              <span class="color-name">Blue</span>
-            </div>
+            <div class="color-item" onclick="navigateTo('shop')" style="cursor: pointer;"><div class="color-swatch" style="background: #111111; border: 2px solid #333;" title="Black"></div><span class="color-name">Black</span></div>
+            <div class="color-item" onclick="navigateTo('shop')" style="cursor: pointer;"><div class="color-swatch" style="background: #0000FF; border: 2px solid #00008b;" title="Blue"></div><span class="color-name">Blue</span></div>
           </div>
           <span class="category-price-tag" style="text-align: center; display: block;">35,000 TSH</span>
           <button class="btn btn-secondary btn-full" onclick="navigateTo('shop')" style="margin-top: 16px;">Shop Jerseys</button>
@@ -304,27 +133,14 @@
             <img src="https://images.unsplash.com/photo-1544816155-12df9643f363?w=600" alt="Lifestyle Tote Bags Collection" style="width: 100%; height: 100%; object-fit: cover;" loading="lazy">
           </div>
           <div class="color-options-display" style="justify-content: center; margin-bottom: 20px;">
-            <div class="color-item" onclick="navigateTo('shop')" style="cursor: pointer;">
-              <div class="color-swatch" style="background: #808080; border: 2px solid #555;" title="Grey"></div>
-              <span class="color-name">Grey</span>
-            </div>
-            <div class="color-item" onclick="navigateTo('shop')" style="cursor: pointer;">
-              <div class="color-swatch" style="background: #F5F5DC; border: 2px solid #d4c4a8;" title="Beige"></div>
-              <span class="color-name">Beige</span>
-            </div>
-            <div class="color-item" onclick="navigateTo('shop')" style="cursor: pointer;">
-              <div class="color-swatch" style="background: #36454F; border: 2px solid #1a2326;" title="Charcoal"></div>
-              <span class="color-name">Charcoal</span>
-            </div>
-            <div class="color-item" onclick="navigateTo('shop')" style="cursor: pointer;">
-              <div class="color-swatch" style="background: #FFFFF0; border: 2px solid #e8e8d0;" title="Ivory"></div>
-              <span class="color-name">Ivory</span>
-            </div>
+            <div class="color-item" onclick="navigateTo('shop')" style="cursor: pointer;"><div class="color-swatch" style="background: #808080; border: 2px solid #555;" title="Grey"></div><span class="color-name">Grey</span></div>
+            <div class="color-item" onclick="navigateTo('shop')" style="cursor: pointer;"><div class="color-swatch" style="background: #F5F5DC; border: 2px solid #d4c4a8;" title="Beige"></div><span class="color-name">Beige</span></div>
+            <div class="color-item" onclick="navigateTo('shop')" style="cursor: pointer;"><div class="color-swatch" style="background: #36454F; border: 2px solid #1a2326;" title="Charcoal"></div><span class="color-name">Charcoal</span></div>
+            <div class="color-item" onclick="navigateTo('shop')" style="cursor: pointer;"><div class="color-swatch" style="background: #FFFFF0; border: 2px solid #e8e8d0;" title="Ivory"></div><span class="color-name">Ivory</span></div>
           </div>
           <span class="category-price-tag" style="text-align: center; display: block;">40,000 TSH</span>
           <button class="btn btn-secondary btn-full" onclick="navigateTo('shop')" style="margin-top: 16px;">Shop Tote Bags</button>
         </article>
-
       </div>
     </div>
   </section>
@@ -422,9 +238,7 @@
       <p style="color: var(--text-muted); font-size: 1.2rem; max-width: 700px; margin: 20px auto 0;">Founded in 2025 by Quincy — a vision to merge fashion with social impact.</p>
     </div>
   </section>
-  
   <section>
-  
     <div class="container">
       <div class="about-text-content">
         <h2 style="font-size: 2rem; margin-bottom: 20px;">About Lifestyle</h2>
@@ -435,19 +249,20 @@
         <p>Beyond fashion, Lifestyle believes that true success is measured by the positive impact a brand has on the people around it. Giving back has been part of the vision from the very beginning. Through community initiatives, collaborations, and future outreach programs, Lifestyle aims to support young creatives, uplift local communities, and create opportunities that inspire growth and hope. We believe that when a community grows stronger, everyone benefits.</p>
         <p>Today, Lifestyle continues to grow with the same mission that inspired its beginning: to empower a generation of dreamers, creators, and everyday individuals to wear their confidence, tell their story, and make a meaningful difference in the world around them.</p>
 
-         <!-- Founder Section -->
-<div style="display: flex; gap: 40px; align-items: center; margin: 60px 0; flex-wrap: wrap;">
-  <div style="flex: 1; min-width: 300px;">
-    <div class="section-tag">The Founder</div>
-    <h3 style="font-size: 2.5rem; margin-bottom: 16px;">Quincy</h3>
-    <p style="color: var(--text-muted); line-height: 1.8; font-size: 1.05rem;">
-      Quincy founded Lifestyle with a simple belief: what you wear tells the world who you are. Growing up in Tanzania, he saw how fashion could empower communities and spark positive change. In 2025, he turned that belief into a brand — one that doesn't just sell clothes, but builds a movement of confident, creative, and responsible individuals.
-    </p>
-  </div>
-  <div style="flex: 1; min-width: 300px; aspect-ratio: 1; background: var(--bg-light); border-radius: 8px; overflow: hidden; border: 1px solid var(--border);">
-    <img src="iamquincy.html.JPG" alt="Quincy, Founder of Lifestyle" style="width: 100%; height: 100%; object-fit: cover;">
-  </div>
-</div>
+        <!-- Founder Section -->
+        <div style="display: flex; gap: 40px; align-items: center; margin: 60px 0; flex-wrap: wrap;">
+          <div style="flex: 1; min-width: 300px;">
+            <div class="section-tag">The Founder</div>
+            <h3 style="font-size: 2.5rem; margin-bottom: 16px;">Quincy</h3>
+            <p style="color: var(--text-muted); line-height: 1.8; font-size: 1.05rem;">
+              Quincy founded Lifestyle with a simple belief: what you wear tells the world who you are. Growing up in Tanzania, he saw how fashion could empower communities and spark positive change. In 2025, he turned that belief into a brand — one that doesn't just sell clothes, but builds a movement of confident, creative, and responsible individuals.
+            </p>
+          </div>
+          <div style="flex: 1; min-width: 300px; aspect-ratio: 1; background: var(--bg-light); border-radius: 8px; overflow: hidden; border: 1px solid var(--border);">
+            <img src="iamquincy.html.JPG" alt="Quincy, Founder of Lifestyle" style="width: 100%; height: 100%; object-fit: cover;">
+          </div>
+        </div>
+
         <div class="vision-mission-panel">
           <article class="vm-card">
             <div class="vm-icon"></div>
@@ -481,10 +296,9 @@
       <h2 class="section-title">The Lifestyle Movement</h2>
       <p class="section-subtitle">Photos and videos from our community events, campaigns, and everyday moments</p>
     </div>
-
     <div class="community-gallery">
       <article class="gallery-item">
-        <img src="images/community-jersey-blue.jpg" alt="Lifestyle community member wearing blue jersey in Dar es Salaam" loading="lazy">
+        <img src="images/community-jersey-blue.jpg" alt="Lifestyle community member wearing blue jersey" loading="lazy">
         <div class="gallery-overlay"><div class="gallery-title">Jersey Collection - Blue</div><div class="gallery-desc">Community showcase from Dar es Salaam</div></div>
       </article>
       <article class="gallery-item">
@@ -560,255 +374,7 @@
 
 <div class="toast" id="toast" role="alert" aria-live="polite"></div>
 
-<script>
-// ==================== DATA ====================
-
-  const products = [
-  { 
-    id: 1, 
-    name: "Essential Tee - Black", 
-    category: "T-Shirts", 
-    price: 40000, 
-    image: "frontblacktshirt.html.JPEG", 
-    sizes: ["XS","S","M","L","XL","XXL"], 
-    colors: ["#111111","#FFFFFF","#8B4513"], 
-    rating: 4.8, 
-    tag: "bestseller", 
-    isNew: true 
-  },
-  { 
-    id: 2, 
-    name: "Essential Tee - White", 
-    category: "T-Shirts", 
-    price: 40000, 
-    image: "frontwhitetshirt2.html.png", 
-    sizes: ["XS","S","M","L","XL","XXL"], 
-    colors: ["#FFFFFF","#111111"], 
-    rating: 4.9, 
-    tag: "bestseller", 
-    isNew: true 
-  },
-  { 
-    id: 3, 
-    name: "Essential Tee - Brown", 
-    category: "T-Shirts", 
-    price: 40000, 
-    image: "frontbrowntshirt.html.JPEG", 
-    sizes: ["XS","S","M","L","XL","XXL"], 
-    colors: ["#8B4513","#111111"], 
-    rating: 4.7, 
-    tag: "new", 
-    isNew: true 
-  },
-  { 
-    id: 4, 
-    name: "Signature Tee - Pink", 
-    category: "T-Shirts", 
-    price: 40000, 
-    image: "pinktshirt.html.jpeg", 
-    sizes: ["S","M","L","XL"], 
-    colors: ["#FFC0CB","#111111"], 
-    rating: 4.9, 
-    tag: "new", 
-    isNew: true 
-  },
-
-  { 
-    id: 5, 
-    name: "Crop Tee - Black", 
-    category: "Crop Tees", 
-    price: 30000, 
-    image: "crop2.html.jpeg", 
-    sizes: ["XS","S","M","L"], 
-    colors: ["#111111","#FFFFFF"], 
-    rating: 4.6, 
-    tag: "new", 
-    isNew: true 
-  },
-  { 
-    id: 6, 
-    name: "Jersey - Blue", 
-    category: "Jerseys", 
-    price: 35000, 
-    image: "bluejersey.html.jpeg", 
-    sizes: ["S","M","L","XL","XXL"], 
-    colors: ["#0000FF","#111111"], 
-    rating: 4.9, 
-    tag: "bestseller", 
-    isNew: false 
-  },
-  { 
-    id: 7, 
-    name: "Classic Tote - Grey", 
-    category: "Tote Bags", 
-    price: 40000, 
-    image: "https://images.unsplash.com/photo-1544816155-12df9643f363?w=600", 
-    sizes: ["One Size"], 
-    colors: ["#808080","#F5F5DC"], 
-    rating: 4.9, 
-    tag: "bestseller", 
-    isNew: false 
-  }
-]
-
-
-let cart = JSON.parse(localStorage.getItem('lifestyle_cart') || '[]');
-
-// ==================== UTILS ====================
-const formatPrice = (p) => 'TSH ' + p.toLocaleString('en-US');
-const showToast = (msg) => { const t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 2500); };
-const saveCart = () => localStorage.setItem('lifestyle_cart', JSON.stringify(cart));
-
-// ==================== SEO ROUTING ====================
-function navigateTo(page) {
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  const target = document.getElementById('page-' + page);
-  if (target) target.classList.add('active');
-  history.pushState({ page: page }, '', '/' + page);
-  const titles = { home: 'Home', shop: 'Shop', about: 'About Us', community: 'Community', contact: 'Contact', cart: 'Cart' };
-  document.title = `Lifestyle — ${titles[page] || 'Premium Fashion Brand'}`;
-  window.scrollTo(0, 0);
-  if (page === 'shop') renderShopProducts();
-  if (page === 'cart') renderCart();
-  document.getElementById('navLinks').classList.remove('mobile-open');
-}
-
-window.addEventListener('popstate', (event) => {
-  if (event.state && event.state.page) navigateTo(event.state.page);
-  else navigateTo('home');
-});
-
-window.addEventListener('DOMContentLoaded', () => {
-  const path = window.location.pathname.replace('/', '');
-  if (path && document.getElementById('page-' + path)) navigateTo(path);
-});
-
-// ==================== PRODUCTS ====================
-function createProductCard(p) {
-  return `
-    <article class="product-card" role="listitem">
-      <div class="product-img-wrap">
-        <img src="${p.image}" class="product-img" alt="Lifestyle ${p.name}" loading="lazy">
-        ${p.isNew ? '<div class="product-badge">New</div>' : ''}
-        ${p.tag === 'bestseller' ? '<div class="product-badge" style="background: var(--accent); color: var(--bg);">Best Seller</div>' : ''}
-      </div>
-      <div class="product-info">
-        <div class="product-category">${p.category}</div>
-        <h3 class="product-name">${p.name}</h3>
-        <div class="product-price">
-          <span class="price">${formatPrice(p.price)}</span>
-          <button class="add-cart-btn" onclick="quickAddToCart(${p.id})" aria-label="Add ${p.name} to cart">Add</button>
-        </div>
-      </div>
-    </article>
-  `;
-}
-
-function renderShopProducts() {
-  document.getElementById('shopProducts').innerHTML = products.map(createProductCard).join('');
-}
-
-// ==================== CART ====================
-function quickAddToCart(id) {
-  const p = products.find(x => x.id === id);
-  const existing = cart.find(c => c.id === id);
-  if (existing) existing.qty++;
-  else cart.push({ id, name: p.name, price: p.price, image: p.image, size: 'M', qty: 1 });
-  saveCart(); updateBadges(); showToast('Added to cart!');
-}
-
-function removeFromCart(idx) { cart.splice(idx, 1); saveCart(); updateBadges(); renderCart(); }
-function updateCartQty(idx, d) { cart[idx].qty += d; if (cart[idx].qty < 1) cart.splice(idx, 1); saveCart(); updateBadges(); renderCart(); }
-
-function renderCart() {
-  const layout = document.getElementById('cartLayout');
-  if (cart.length === 0) {
-    layout.innerHTML = `<div style="grid-column: 1 / -1; text-align: center; padding: 60px;"><h3>Your cart is empty</h3><button class="btn btn-primary" onclick="navigateTo('shop')" style="margin-top: 20px;">Shop Now</button></div>`;
-    return;
-  }
-  const subtotal = cart.reduce((s, c) => s + c.price * c.qty, 0);
-  const shipping = subtotal > 100000 ? 0 : 5000;
-  const total = subtotal + shipping;
-  layout.innerHTML = `
-    <div class="cart-items">
-      ${cart.map((c, i) => `
-        <div class="cart-item">
-          <div class="cart-item-img"><img src="${c.image}" alt="${c.name}"></div>
-          <div><h4 style="margin-bottom: 4px;">${c.name}</h4><p style="color: var(--text-muted); font-size: 0.85rem;">Size: ${c.size}</p>
-            <div style="display: flex; gap: 8px; margin-top: 8px;">
-              <button class="btn btn-secondary btn-small" onclick="updateCartQty(${i}, -1)">-</button>
-              <span style="padding: 8px;">${c.qty}</span>
-              <button class="btn btn-secondary btn-small" onclick="updateCartQty(${i}, 1)">+</button>
-            </div>
-          </div>
-          <div style="text-align: right;"><div style="font-weight: 700;">${formatPrice(c.price * c.qty)}</div><button style="background: none; border: none; color: var(--danger); cursor: pointer; font-size: 0.8rem; text-decoration: underline; margin-top: 8px;" onclick="removeFromCart(${i})">Remove</button></div>
-        </div>
-      `).join('')}
-    </div>
-    <div class="cart-summary">
-      <h3 style="margin-bottom: 20px;">Order Summary</h3>
-      <div class="summary-row"><span>Subtotal</span><span>${formatPrice(subtotal)}</span></div>
-      <div class="summary-row"><span>Shipping</span><span>${shipping === 0 ? 'FREE' : formatPrice(shipping)}</span></div>
-      <div class="summary-row total"><span>Total</span><span>${formatPrice(total)}</span></div>
-      <button class="btn btn-primary btn-full" onclick="showToast('Checkout coming soon!')" style="margin-top: 20px;">Proceed to Checkout</button>
-    </div>
-  `;
-}
-
-function updateBadges() { document.getElementById('cartBadge').textContent = cart.reduce((s, c) => s + c.qty, 0); }
-
-// ==================== 3D HERO ====================
-function init3D() {
-  const canvas = document.getElementById('hero-canvas');
-  if (!canvas) return;
-  const scene = new THREE.Scene();
-  const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-  const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
-  renderer.setSize(window.innerWidth, window.innerHeight);
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-
-  const torus = new THREE.Mesh(new THREE.TorusKnotGeometry(1.2, 0.35, 128, 32), new THREE.MeshBasicMaterial({ color: 0xffffff, wireframe: true, transparent: true, opacity: 0.15 }));
-  scene.add(torus);
-  
-  for (let i = 0; i < 8; i++) {
-    const mesh = new THREE.Mesh(new THREE.IcosahedronGeometry(0.3 + Math.random() * 0.4, 0), new THREE.MeshBasicMaterial({ color: 0xBDBDBD, wireframe: true, transparent: true, opacity: 0.1 }));
-    const angle = (i / 8) * Math.PI * 2;
-    const radius = 3 + Math.random() * 2;
-    mesh.position.set(Math.cos(angle) * radius, (Math.random() - 0.5) * 3, Math.sin(angle) * radius);
-    scene.add(mesh);
-    mesh.userData = { angle, radius, speed: 0.002 + Math.random() * 0.003 };
-  }
-
-  camera.position.z = 6;
-  let mouseX = 0, mouseY = 0;
-  document.addEventListener('mousemove', (e) => { mouseX = (e.clientX / window.innerWidth - 0.5) * 2; mouseY = (e.clientY / window.innerHeight - 0.5) * 2; });
-
-  function animate() {
-    requestAnimationFrame(animate);
-    torus.rotation.x += 0.003; torus.rotation.y += 0.003;
-    scene.children.forEach(c => {
-      if (c.userData.speed) {
-        c.userData.angle += c.userData.speed;
-        c.position.x = Math.cos(c.userData.angle) * c.userData.radius;
-        c.position.z = Math.sin(c.userData.angle) * c.userData.radius;
-        c.rotation.x += 0.01; c.rotation.y += 0.01;
-      }
-    });
-    camera.position.x += (mouseX * 0.5 - camera.position.x) * 0.02;
-    camera.position.y += (-mouseY * 0.5 - camera.position.y) * 0.02;
-    camera.lookAt(scene.position);
-    renderer.render(scene, camera);
-  }
-  animate();
-  window.addEventListener('resize', () => { camera.aspect = window.innerWidth / window.innerHeight; camera.updateProjectionMatrix(); renderer.setSize(window.innerWidth, window.innerHeight); });
-}
-
-// ==================== INIT ====================
-window.addEventListener('load', () => {
-  setTimeout(() => document.getElementById('loader').classList.add('hidden'), 800);
-  updateBadges();
-  init3D();
-});
-</script>
+<!-- Link to External JavaScript -->
+<script src="script.js"></script>
 </body>
 </html>
