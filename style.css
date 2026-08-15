@@ -5,10 +5,7 @@ body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--tex
 h1,h2,h3,h4 { font-family: 'Montserrat', sans-serif; font-weight: 800; letter-spacing: -0.02em; }
 .container { max-width: 1400px; margin: 0 auto; padding: 0 24px; }
 
-#loader { position: fixed; inset: 0; background: var(--bg); z-index: 9999; display: flex; align-items: center; justify-content: center; transition: opacity 0.8s ease; }
-#loader.hidden { opacity: 0; pointer-events: none; }
-.loader-logo { font-family: 'Montserrat', sans-serif; font-size: 2.5rem; font-weight: 900; letter-spacing: 0.3em; animation: pulse 1.5s infinite; }
-@keyframes pulse { 0%,100% { opacity: 0.3; } 50% { opacity: 1; } }
+   #loader { display: none !important; }
 
 header { position: fixed; top: 0; left: 0; right: 0; z-index: 1000; background: rgba(10,10,10,0.85); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border); }
 .nav-inner { display: flex; align-items: center; justify-content: space-between; padding: 18px 24px; max-width: 1400px; margin: 0 auto; }
